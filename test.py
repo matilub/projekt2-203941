@@ -40,9 +40,9 @@ class Rura:
 
 class Zbiornik:
     def __init__(self, x, y, width=100, height=140, nazwa=""):
-        self.x = x;
+        self.x = x
         self.y = y
-        self.width = width;
+        self.width = width
         self.height = height
         self.nazwa = nazwa
         self.pojemnosc = 100.0
@@ -136,46 +136,75 @@ class SymulacjaKaskady(QWidget):
         self.btn.setStyleSheet("background-color: #444; color: white;")
         self.btn.clicked.connect(self.przelacz_symulacje)
 
-        # //////////////////////////////
 
-        self.btn_z1_fill = QPushButton("z1-full", self)
-        self.btn_z1_fill.setGeometry(150, 550, 100, 30)
-        self.btn_z1_fill.setStyleSheet("background-color: #444; color:white;")
-        self.btn_z1_fill.clicked.connect(lambda: self.ustaw_zbiornik(self.z1, 100.0))
+        # z1
+        self.btn_z1_dodaj = QPushButton("(+) Napełnij z1", self)
+        self.btn_z1_dodaj.setGeometry(150, 520, 100, 30)
+        self.btn_z1_dodaj.setStyleSheet("background-color: #444; color: white;")
+        self.btn_z1_dodaj.clicked.connect(self.napelnij_z1)
 
-        self.btn_z2_fill = QPushButton("z2-full", self)
-        self.btn_z2_fill.setGeometry(250, 550, 100, 30)
-        self.btn_z2_fill.setStyleSheet("background-color: #444; color:white;")
-        self.btn_z2_fill.clicked.connect(lambda: self.ustaw_zbiornik(self.z2, 100.0))
+        self.btn_z1_usun = QPushButton("(-) Opróżnij z1", self)
+        self.btn_z1_usun.setGeometry(150, 555, 100, 30)
+        self.btn_z1_usun.setStyleSheet("background-color: #444; color: white;")
+        self.btn_z1_usun.clicked.connect(self.oproznij_z1)
 
-        self.btn_z3_fill = QPushButton("z3-full", self)
-        self.btn_z3_fill.setGeometry(350, 550, 100, 30)
-        self.btn_z3_fill.setStyleSheet("background-color: #444; color:white;")
-        self.btn_z3_fill.clicked.connect(lambda: self.ustaw_zbiornik(self.z3, 100.0))
+        # z2
+        self.btn_z2_dodaj = QPushButton("(+) Napełnij z2", self)
+        self.btn_z2_dodaj.setGeometry(250, 520, 100, 30)
+        self.btn_z2_dodaj.setStyleSheet("background-color: #444; color: white;")
+        self.btn_z2_dodaj.clicked.connect(self.napelnij_z2)
 
-        self.btn_z1_fill = QPushButton("z1-zero", self)
-        self.btn_z1_fill.setGeometry(450, 550, 100, 30)
-        self.btn_z1_fill.setStyleSheet("background-color: #444; color:white;")
-        self.btn_z1_fill.clicked.connect(lambda: self.ustaw_zbiornik(self.z1, 0.0))
+        self.btn_z2_usun = QPushButton("(-) Opróżnij z2", self)
+        self.btn_z2_usun.setGeometry(250, 555, 100, 30)
+        self.btn_z2_usun.setStyleSheet("background-color: #444; color: white;")
+        self.btn_z2_usun.clicked.connect(self.oproznij_z2)
 
-        self.btn_z2_fill = QPushButton("z2-zero", self)
-        self.btn_z2_fill.setGeometry(550, 550, 100, 30)
-        self.btn_z2_fill.setStyleSheet("background-color: #444; color:white;")
-        self.btn_z2_fill.clicked.connect(lambda: self.ustaw_zbiornik(self.z2, 0.0))
+        # z3
+        self.btn_z3_dodaj = QPushButton("(+) Napełnij z3", self)
+        self.btn_z3_dodaj.setGeometry(350, 520, 100, 30)
+        self.btn_z3_dodaj.setStyleSheet("background-color: #444; color: white;")
+        self.btn_z3_dodaj.clicked.connect(self.napelnij_z3)
 
-        self.btn_z3_fill = QPushButton("z3-zero", self)
-        self.btn_z3_fill.setGeometry(650, 550, 100, 30)
-        self.btn_z3_fill.setStyleSheet("background-color: #444; color:white;")
-        self.btn_z3_fill.clicked.connect(lambda: self.ustaw_zbiornik(self.z3, 0.0))
+        self.btn_z3_usun = QPushButton("(-) Opróżnij z3", self)
+        self.btn_z3_usun.setGeometry(350, 555, 100, 30)
+        self.btn_z3_usun.setStyleSheet("background-color: #444; color: white;")
+        self.btn_z3_usun.clicked.connect(self.oproznij_z3)
 
-        # //////////////////////////////
         self.running = False
         self.flow_speed = 0.8
 
-    def ustaw_zbiornik(self, zb: Zbiornik, ilosc: float):
-        zb.aktualna_ilosc = max(0.0, min(zb.pojemnosc, float(ilosc)))
-        zb.aktualizuj_poziom()
+        # sloty do wypelbiania
+
+    def napelnij_z1(self):
+        self.z1.aktualna_ilosc = 100.0
+        self.z1.aktualizuj_poziom()
         self.update()
+
+    def oproznij_z1(self):
+        self.z1.aktualna_ilosc = 0.0
+        self.z1.aktualizuj_poziom()
+        self.update()
+
+    def napelnij_z2(self):
+        self.z2.aktualna_ilosc = 100.0
+        self.z2.aktualizuj_poziom()
+        self.update()
+
+    def oproznij_z2(self):
+        self.z2.aktualna_ilosc = 0.0
+        self.z2.aktualizuj_poziom()
+        self.update()
+
+    def napelnij_z3(self):
+        self.z3.aktualna_ilosc = 100.0
+        self.z3.aktualizuj_poziom()
+        self.update()
+
+    def oproznij_z3(self):
+        self.z3.aktualna_ilosc = 0.0
+        self.z3.aktualizuj_poziom()
+        self.update()
+
 
     def przelacz_symulacje(self):
         if self.running:
