@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QTextEdit
 from PyQt5.QtCore import Qt, QTimer, QPointF
 from PyQt5.QtGui import QPainter, QColor, QPen, QPainterPath, QPolygonF
 
@@ -193,9 +193,9 @@ class SymulacjaKaskady(QWidget):
         mid_y3 = (p_start3[1] + p_koniec3[1]) / 2
 
         self.rura3 = Rura([
-            p_start3,  # WYJŚCIE Z PRAWEGO BOKU ZAWORU
-            (p_koniec3[0], p_start3[1]),  # POZIOMO W PRAWO
-            (p_koniec3[0], mid_y3),  # SKRĘT W DÓŁ
+            p_start3,
+            (p_koniec3[0], p_start3[1]),
+            (p_koniec3[0], mid_y3),
             p_koniec3
         ])
 
@@ -204,9 +204,9 @@ class SymulacjaKaskady(QWidget):
         mid_y4 = (p_start4[1] + p_koniec4[1]) / 2
 
         self.rura4 = Rura([
-            p_start4,  # WYJŚCIE Z PRAWEGO BOKU ZAWORU
-            (p_koniec4[0], p_start4[1]),  # POZIOMO W PRAWO
-            (p_koniec4[0], mid_y4),  # SKRĘT W DÓŁ
+            p_start4,  #
+            (p_koniec4[0], p_start4[1]),
+            (p_koniec4[0], mid_y4),
             p_koniec4
         ])
 
@@ -219,12 +219,12 @@ class SymulacjaKaskady(QWidget):
 
         self.rura_powrot = Rura([
             p_start5,  # start Z4
-            (p_start5[0], p_start5[1] + 50),  # pion w dół 50 px
-            (x_pompa, p_start5[1] + 50),  # poziomo w prawo do poziomu pompy
-            (x_pompa + 100, p_start5[1] + 50),  # poziomo w prawo o 100 px (od pompy)
-            (x_pompa + 100, p_koniec5[1]-20),  # pion w górę do poziomu nad pompą
+            (p_start5[0], p_start5[1] + 50),
+            (x_pompa, p_start5[1] + 50),
+            (x_pompa + 100, p_start5[1] + 50),
+            (x_pompa + 100, p_koniec5[1]-20),
             (p_koniec5[0], p_koniec5[1] - 20),
-            p_koniec5  # pionowo w dół do Z1
+            p_koniec5
         ])
 
         self.rury = [self.rura1, self.rura2, self.rura3, self.rura4, self.rura_powrot]
@@ -232,89 +232,73 @@ class SymulacjaKaskady(QWidget):
         self.timer = QTimer()
         self.timer.timeout.connect(self.logika_przeplywu)
 
-        self.btn = QPushButton("start/stop", self)
-        self.btn.setGeometry(50, 550, 100, 30)
-        self.btn.setStyleSheet("background-color: #444; color: white;")
+        lbl_raport = QLabel("LOGI SYSTEMOWE:", self)
+        lbl_raport.setGeometry(700, 50, 200, 20)
+        lbl_raport.setStyleSheet("color: white; font-weight: bold;")
+
+        self.okno_raportow = QTextEdit(self)
+        self.okno_raportow.setGeometry(700, 80, 350, 650)
+        self.okno_raportow.setReadOnly(True)
+        self.okno_raportow.setStyleSheet("""
+                    background-color: #111; 
+                    color: #00FF00; 
+                    font-family: Consolas; 
+                    border: 1px solid #555;
+                """)
+
+
+        self.btn = QPushButton("Start/Stop", self)
+        self.btn.setGeometry(50, 650, 100, 40)
+        self.btn.setStyleSheet("background-color: #555; color: white;")
         self.btn.clicked.connect(self.przelacz_symulacje)
 
+        self.btn_pompa = QPushButton("WŁĄCZ POMPĘ", self)
+        self.btn_pompa.setGeometry(170, 650, 150, 40)
+        self.btn_pompa.setStyleSheet("background-color: #AA0000; color: white; font-weight: bold;")
+        self.btn_pompa.clicked.connect(self.przelacz_pompe)
 
-        # # z1
-        # self.btn_z1_dodaj = QPushButton("(+) Napełnij z1", self)
-        # self.btn_z1_dodaj.setGeometry(150, 520, 100, 30)
-        # self.btn_z1_dodaj.setStyleSheet("background-color: #444; color: white;")
-        # self.btn_z1_dodaj.clicked.connect(self.napelnij_z1)
-        #
-        # self.btn_z1_usun = QPushButton("(-) Opróżnij z1", self)
-        # self.btn_z1_usun.setGeometry(150, 555, 100, 30)
-        # self.btn_z1_usun.setStyleSheet("background-color: #444; color: white;")
-        # self.btn_z1_usun.clicked.connect(self.oproznij_z1)
-        #
-        # # z2
-        # self.btn_z2_dodaj = QPushButton("(+) Napełnij z2", self)
-        # self.btn_z2_dodaj.setGeometry(250, 520, 100, 30)
-        # self.btn_z2_dodaj.setStyleSheet("background-color: #444; color: white;")
-        # self.btn_z2_dodaj.clicked.connect(self.napelnij_z2)
-        #
-        # self.btn_z2_usun = QPushButton("(-) Opróżnij z2", self)
-        # self.btn_z2_usun.setGeometry(250, 555, 100, 30)
-        # self.btn_z2_usun.setStyleSheet("background-color: #444; color: white;")
-        # self.btn_z2_usun.clicked.connect(self.oproznij_z2)
-        #
-        # # z3
-        # self.btn_z3_dodaj = QPushButton("(+) Napełnij z3", self)
-        # self.btn_z3_dodaj.setGeometry(350, 520, 100, 30)
-        # self.btn_z3_dodaj.setStyleSheet("background-color: #444; color: white;")
-        # self.btn_z3_dodaj.clicked.connect(self.napelnij_z3)
-        #
-        # self.btn_z3_usun = QPushButton("(-) Opróżnij z3", self)
-        # self.btn_z3_usun.setGeometry(350, 555, 100, 30)
-        # self.btn_z3_usun.setStyleSheet("background-color: #444; color: white;")
-        # self.btn_z3_usun.clicked.connect(self.oproznij_z3)
 
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.logika_przeplywu)
         self.running = False
         self.flow_speed = 0.8
+        self.stan_zaworu_ostatni = "PRAWO"
+        self.log("System SCADA uruchomiony. Gotowy do pracy.")
+
+    def log(self, wiadomosc):
+        """Funkcja dodająca wpis do okna raportów z datą i godziną"""
+
+        self.okno_raportow.append(f"{wiadomosc}")
+
+        cursor = self.okno_raportow.textCursor()
+        cursor.movePosition(cursor.End)
+        self.okno_raportow.setTextCursor(cursor)
 
 
-
-    def napelnij_z1(self):
-        self.z1.aktualna_ilosc = 100.0
-        self.z1.aktualizuj_poziom()
-        self.update()
-
-    def oproznij_z1(self):
-        self.z1.aktualna_ilosc = 0.0
-        self.z1.aktualizuj_poziom()
-        self.update()
-
-    def napelnij_z2(self):
-        self.z2.aktualna_ilosc = 100.0
-        self.z2.aktualizuj_poziom()
-        self.update()
-
-    def oproznij_z2(self):
-        self.z2.aktualna_ilosc = 0.0
-        self.z2.aktualizuj_poziom()
-        self.update()
-
-    def napelnij_z3(self):
-        self.z3.aktualna_ilosc = 100.0
-        self.z3.aktualizuj_poziom()
-        self.update()
-
-    def oproznij_z3(self):
-        self.z3.aktualna_ilosc = 0.0
-        self.z3.aktualizuj_poziom()
-        self.update()
 
 
     def przelacz_symulacje(self):
         if self.running:
             self.timer.stop()
+            self.log("ZATRZYMANO symulację.")
         else:
             self.timer.start(20)
+            self.log("URUCHOMIONO symulację.")
         self.running = not self.running
 
+    def przelacz_pompe(self):
+        self.pompa.wlaczona = not self.pompa.wlaczona
+        if self.pompa.wlaczona:
+            self.btn_pompa.setText("POMPA PRACUJE")
+            self.btn_pompa.setStyleSheet("background-color: #00AA00; color: white;")
+            self.log("STEROWANIE: Pompa została WŁĄCZONA.")
+        else:
+            self.btn_pompa.setText("WŁĄCZ POMPĘ")
+            self.btn_pompa.setStyleSheet("background-color: #AA0000; color: white;")
+            self.log("STEROWANIE: Pompa została WYŁĄCZONA.")
+
     def logika_przeplywu(self):
+
         plynie_1 = False
         if not self.z1.czy_pusty() and not self.z2.czy_pelny():
             ilosc = self.z1.usun_ciecz(self.flow_speed)
@@ -322,14 +306,58 @@ class SymulacjaKaskady(QWidget):
             plynie_1 = True
         self.rura1.ustaw_przeplyw(plynie_1)
 
-        plynie_2 = False
-        if self.z2.aktualna_ilosc > 5.0 and not self.z3.czy_pelny():
-            ilosc = self.z2.usun_ciecz(self.flow_speed)
-            self.z3.dodaj_ciecz(ilosc)
-            plynie_2 = True
-            self.rura2.ustaw_przeplyw(plynie_2)
 
-            self.update()
+        if self.z3.aktualna_ilosc >= 99.0:
+            self.zawor.kierunek = "LEWO"
+            cel_z3 = False
+        else:
+            self.zawor.kierunek = "PRAWO"
+            cel_z3 = True
+
+
+        if self.zawor.kierunek != self.stan_zaworu_ostatni:
+            cel = "Z4 (Powrót)" if self.zawor.kierunek == "LEWO" else "Z3 (Cel)"
+            self.log(f"AUTO: Przełączono zawór na: {cel}")
+            self.stan_zaworu_ostatni = self.zawor.kierunek
+
+
+        plynie_2 = False
+        plynie_3 = False
+        plynie_4 = False
+
+        if self.z2.aktualna_ilosc > 0:
+            plynie_2 = True
+            if cel_z3:
+
+                self.z2.usun_ciecz(self.flow_speed)
+                self.z3.dodaj_ciecz(self.flow_speed)
+                plynie_3 = True
+            else:
+
+                if not self.z4.czy_pelny():
+                    self.z2.usun_ciecz(self.flow_speed)
+                    self.z4.dodaj_ciecz(self.flow_speed)
+                    plynie_4 = True
+
+        self.rura2.ustaw_przeplyw(plynie_2)
+        self.rura3.ustaw_przeplyw(plynie_3)
+        self.rura4.ustaw_przeplyw(plynie_4)
+
+
+        plynie_powrot = False
+        if self.pompa.wlaczona:
+            if not self.z4.czy_pusty() and not self.z1.czy_pelny():
+
+                ilosc = self.z4.usun_ciecz(self.flow_speed * 2)
+                self.z1.dodaj_ciecz(ilosc)
+                plynie_powrot = True
+            elif self.z4.czy_pusty():
+
+                self.przelacz_pompe()
+                self.log("ALARM: Pompa zatrzymana - brak cieczy w Z4!")
+
+        self.rura_powrot.ustaw_przeplyw(plynie_powrot)
+        self.update()
 
     def paintEvent(self, event):
         p = QPainter(self)
