@@ -6,7 +6,7 @@ from PyQt5.QtGui import QPainter, QColor, QPen, QPainterPath, QPolygonF
 
 class Rura:
     def __init__(self, punkty, grubosc=12, kolor=Qt.gray):
-        # Konwersja listy krotek na obiekty QPointF
+
         self.punkty = [QPointF(float(p[0]), float(p[1])) for p in punkty]
         self.grubosc = grubosc
         self.kolor_rury = kolor
@@ -102,7 +102,7 @@ class Pompa:
         self.wlaczona = False  # Stan początkowy
 
     def draw(self, painter):
-        # Zielony jak włączona, Czerwony jak wyłączona
+
         kolor = Qt.green if self.wlaczona else Qt.red
 
         painter.setPen(QPen(Qt.white, 2))
@@ -119,18 +119,16 @@ class Zawor:
         self.kierunek = "PRAWO"
 
     def draw(self, painter):
-        # 1. Rysujemy KWADRAT (Obudowa)
-        # Rozmiar 30x30, wyśrodkowany w punkcie x, y
+
         painter.setPen(QPen(Qt.white, 2))
         painter.setBrush(QColor(50, 50, 50)) # Ciemne tło zaworu
         painter.drawRect(int(self.x - 15), int(self.y - 15), 30, 30)
 
-        # 2. Rysujemy TRÓJKĄT (Strzałka) w środku
-        # Wyłączamy obrys dla trójkąta, żeby był czysty kolor
+
         painter.setPen(Qt.NoPen)
 
         if self.kierunek == "PRAWO":
-            # Zielony trójkąt w prawo (do Z3)
+
             painter.setBrush(QColor(0, 255, 0))
             points = [
                 QPointF(self.x - 5, self.y - 8),  # Lewa góra
@@ -138,7 +136,7 @@ class Zawor:
                 QPointF(self.x + 8, self.y)       # Dziób w prawo
             ]
         else:
-            # Pomarańczowy trójkąt w lewo (do Z4)
+
             painter.setBrush(QColor(255, 165, 0))
             points = [
                 QPointF(self.x + 5, self.y - 8),  # Prawa góra
@@ -148,7 +146,7 @@ class Zawor:
 
         painter.drawPolygon(QPolygonF(points))
 
-        # 3. Podpis nad zaworem
+
         painter.setPen(Qt.white)
         painter.drawText(int(self.x - 15), int(self.y - 20), "ZAWÓR")
 
@@ -168,7 +166,7 @@ class SymulacjaKaskady(QWidget):
         self.z4 = Zbiornik(150, 550, nazwa="Zbiornik 4")
         self.zbiorniki = [self.z1, self.z2, self.z3, self.z4]
 
-        self.pompa=Pompa(500,700)
+        self.pompa=Pompa(500,740)
         self.zawor = Zawor(350, 500)
 
         p_start = self.z1.punkt_dol_srodek()
@@ -212,21 +210,21 @@ class SymulacjaKaskady(QWidget):
             p_koniec4
         ])
 
-        # RURA Z4 -> Z1: dół Z4 -> prawo -> góra -> 90° do Z1
-        p_start4 = self.z4.punkt_dol_srodek()  # Dół Z4 (150+50, 550+140) = (200, 690)
-        p_koniec1 = self.z1.punkt_gora_srodek()  # Góra Z1 (50+50, 50) = (100, 50)
 
+        p_start5 = self.z4.punkt_dol_srodek()
+        p_koniec5 = self.z1.punkt_gora_srodek()
 
         x_pompa = self.pompa.x
         y_pompa = self.pompa.y
 
         self.rura_powrot = Rura([
-            p_start4,  # start Z4
-            (p_start4[0], p_start4[1] + 50),  # w dół 50 px
-            (x_pompa, p_start4[1] + 50),  # poziomo w prawo do pompy
-            (x_pompa, y_pompa),  # w górę do poziomu pompy
-            (p_koniec1[0], y_pompa),  # poziomo w lewo nad Z1
-            p_koniec1  # pionowo w dół do Z1
+            p_start5,  # start Z4
+            (p_start5[0], p_start5[1] + 50),  # pion w dół 50 px
+            (x_pompa, p_start5[1] + 50),  # poziomo w prawo do poziomu pompy
+            (x_pompa + 100, p_start5[1] + 50),  # poziomo w prawo o 100 px (od pompy)
+            (x_pompa + 100, p_koniec5[1]-20),  # pion w górę do poziomu nad pompą
+            (p_koniec5[0], p_koniec5[1] - 20),
+            p_koniec5  # pionowo w dół do Z1
         ])
 
         self.rury = [self.rura1, self.rura2, self.rura3, self.rura4, self.rura_powrot]
@@ -276,7 +274,7 @@ class SymulacjaKaskady(QWidget):
         self.running = False
         self.flow_speed = 0.8
 
-        # sloty do wypelbiania
+
 
     def napelnij_z1(self):
         self.z1.aktualna_ilosc = 100.0
