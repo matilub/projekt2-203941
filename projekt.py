@@ -300,10 +300,13 @@ class SymulacjaKaskady(QWidget):
     def logika_przeplywu(self):
 
         plynie_1 = False
-        if not self.z1.czy_pusty() and not self.z2.czy_pelny():
-            ilosc = self.z1.usun_ciecz(self.flow_speed)
-            self.z2.dodaj_ciecz(ilosc)
-            plynie_1 = True
+
+        if self.z1.czy_pusty() == False:
+            if self.z2.czy_pelny() == False:
+                ilosc = self.z1.usun_ciecz(self.flow_speed)
+                self.z2.dodaj_ciecz(ilosc)
+                plynie_1 = True
+
         self.rura1.ustaw_przeplyw(plynie_1)
 
 
@@ -316,8 +319,10 @@ class SymulacjaKaskady(QWidget):
 
 
         if self.zawor.kierunek != self.stan_zaworu_ostatni:
-            cel = "Z4 (Powrót)" if self.zawor.kierunek == "LEWO" else "Z3 (Cel)"
-            self.log(f"AUTO: Przełączono zawór na: {cel}")
+            if self.zawor.kierunek == 'LEWO':
+                self.log("AUTO: Przełączono zawór na: Z4 (Powrót)")
+            else:
+                self.log("AUTO: Przełączono zawór na: Z3 (Cel)")
             self.stan_zaworu_ostatni = self.zawor.kierunek
 
 
